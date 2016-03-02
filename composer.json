@@ -1,0 +1,70 @@
+{
+    "name": "comodojo/dispatcher",
+    "description": "Composer project template for comodojo/dispatcher-framework",
+    "license": "MIT",
+    "type": "project",
+    "keywords": [
+        "REST",
+        "php",
+        "rest services",
+        "lframework",
+        "comodojo",
+        "installer"
+    ],
+    "homepage": "https://dispatcher.comodojo.org",
+     "support": {
+        "issues": "https://github.com/comodojo/dispatcher/issues"
+    },
+    "authors": [
+        {
+            "name": "Marco Giovinazzi",
+            "email": "marco.giovinazzi@comodojo.org",
+            "homepage": "http://jme.altervista.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Comodojo\\Dispatcher\\Service\\": "services",
+            "Comodojo\\Dispatcher\\Plugin\\": "plugins"
+        }
+    },
+    "extra": {
+        "comodojo-configuration": {
+            "static-config": "config",
+            "log": {
+                "enabled": true,
+                "providers": {
+                    "local" : {
+                        "name": "local",
+                        "type": "StreamHandler",
+                        "level": "info",
+                        "target": "logs/dispatcher.log"
+                    }
+                }
+            },
+            "cache": {
+                "enabled": true,
+                "algorithm": "PICK_FIRST",
+                "providers": {
+                    "local": {
+                        "name": "local",
+                        "type": "FileCache",
+                        "folder": "cache"
+                    }
+                }
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6.0",
+        "comodojo/dispatcher-installer": "dev-master",
+        "comodojo/dispatcher.framework": "^4.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:comodojo/dispatcher-installer.git"
+        }
+    ]
+}
