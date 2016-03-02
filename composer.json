@@ -33,9 +33,9 @@
             "static-config": "config",
             "log": {
                 "enabled": true,
+                "name": "dispatcher",
                 "providers": {
                     "local" : {
-                        "name": "local",
                         "type": "StreamHandler",
                         "level": "info",
                         "target": "logs/dispatcher.log"
@@ -47,7 +47,6 @@
                 "algorithm": "PICK_FIRST",
                 "providers": {
                     "local": {
-                        "name": "local",
                         "type": "FileCache",
                         "folder": "cache"
                     }
