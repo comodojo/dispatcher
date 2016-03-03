@@ -84,4 +84,4 @@ $dispatcher->events()->loadFromYaml($plugins);
  | Handle request, dispatch result :)
  |
  */
-$dispatcher->dispatch();
+exit( $dispatcher->dispatch() );
