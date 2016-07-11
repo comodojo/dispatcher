@@ -27,6 +27,7 @@ use \Symfony\Component\Yaml\Yaml;
  */
 
 $realpath = realpath(dirname(__FILE__)."/../");
+date_default_timezone_set(@date_default_timezone_get());
 
 /*
  |--------------------------------
@@ -42,26 +43,16 @@ require $realpath.'/vendor/autoload.php';
 
 /*
  |--------------------------------
- | Load config, routes and plugins
+ | Configuration files
  |--------------------------------
  |
- | Load configuration, routes and
- | plugins from yaml files
+ | Configuration, routes and plugins
+ | yaml files.
  |
  */
-$configuration = file_get_contents($realpath."/config/comodojo-config.yml");
-$routes = file_get_contents($realpath."/config/comodojo-routes.yml");
-$plugins = file_get_contents($realpath."/config/comodojo-plugins.yml");
-
-/*
- |--------------------------------
- | Init a dispatcher instance
- |--------------------------------
- |
- | Create the dispatcher instance
- |
- */
-$dispatcher = new Dispatcher();
+$configuration_file = $realpath."/config/comodojo-config.yml";
+$routes_file = $realpath."/config/comodojo-routes.yml";
+$plugins_file = $realpath."/config/comodojo-plugins.yml";
 
 /*
  |--------------------------------
@@ -72,9 +63,49 @@ $dispatcher = new Dispatcher();
  | instance
  |
  */
-$dispatcher->configuration()->loadFromYaml($configuration);
-$dispatcher->router()->loadFromYaml($routes);
-$dispatcher->events()->loadFromYaml($plugins);
+$configuration = file_get_contents($configuration_file);
+$static_configuration = Yaml::parse($configuration);
+
+/*
+ |--------------------------------
+ | Init a dispatcher instance
+ |--------------------------------
+ |
+ | Create the dispatcher instance
+ |
+ */
+$dispatcher = new Dispatcher($static_configuration);
+
+/*
+ |--------------------------------
+ | Loading routes
+ |--------------------------------
+ |
+ | Import static configuration
+ | to initialize the router
+ |
+ */
+if (is_null($dispatcher->router()->loadFromCache())) {
+ 
+    $routes = file_get_contents($routes_file);
+    $static_routes = Yaml::parse($routes);
+    
+    $dispatcher->router()->loadRoutes($static_routes);
+    
+}
+
+/*
+ |--------------------------------
+ | Load  plugins
+ |--------------------------------
+ |
+ | Load plugins from yaml file
+ |
+ */
+$plugins = file_get_contents($plugins_file);
+$static_plugins = Yaml::parse($plugins);
+
+$dispatcher->events()->loadPlugins($static_plugins);
 
 /*
  |--------------------------------
