@@ -85,12 +85,12 @@ $dispatcher = new Dispatcher($static_configuration);
  | to initialize the router
  |
  */
-if (is_null($dispatcher->router()->loadFromCache())) {
+if (empty($dispatcher->router()->table()->routes())) {
  
     $routes = file_get_contents($routes_file);
     $static_routes = Yaml::parse($routes);
     
-    $dispatcher->router()->loadRoutes($static_routes);
+    $dispatcher->router()->table()->load($static_routes);
     
 }
 
