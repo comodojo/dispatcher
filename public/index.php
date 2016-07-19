@@ -1,7 +1,8 @@
 <?php
 
-use Comodojo\Dispatcher\Dispatcher;
+use \Comodojo\Dispatcher\Dispatcher;
 use \Symfony\Component\Yaml\Yaml;
+use \Symfony\Component\Yaml\Exception\ParseException;
 
 /**
  * Comodojo dispatcher - REST services microframework
@@ -26,8 +27,19 @@ use \Symfony\Component\Yaml\Yaml;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ |--------------------------------
+ | Configuration
+ |--------------------------------
+ |
+ | Retrieve real path and declare
+ | configuration files.
+ |
+*/
 $realpath = realpath(dirname(__FILE__)."/../");
-date_default_timezone_set(@date_default_timezone_get());
+$configuration_file = $realpath."/config/comodojo-config.yml";
+$routes_file = $realpath."/config/comodojo-routes.yml";
+$plugins_file = $realpath."/config/comodojo-plugins.yml";
 
 /*
  |--------------------------------
@@ -46,25 +58,21 @@ require $realpath.'/vendor/autoload.php';
  | Configuration files
  |--------------------------------
  |
- | Configuration, routes and plugins
- | yaml files.
+ | Read and parse configuration,
+ | routes and plugins yaml files.
  |
  */
-$configuration_file = $realpath."/config/comodojo-config.yml";
-$routes_file = $realpath."/config/comodojo-routes.yml";
-$plugins_file = $realpath."/config/comodojo-plugins.yml";
+try {
 
-/*
- |--------------------------------
- | Import static configuration
- |--------------------------------
- |
- | Import static config in dispatcher
- | instance
- |
- */
-$configuration = file_get_contents($configuration_file);
-$static_configuration = Yaml::parse($configuration);
+    $configuration = Yaml::parse(file_get_contents($configuration_file));
+    $routes = Yaml::parse(file_get_contents($routes_file));
+    $plugins = Yaml::parse(file_get_contents($plugins_file));
+
+} catch (ParseException $pe) {
+
+    exit("<h1>Error reading configuration files</h1>");
+
+}
 
 /*
  |--------------------------------
@@ -74,24 +82,19 @@ $static_configuration = Yaml::parse($configuration);
  | Create the dispatcher instance
  |
  */
-$dispatcher = new Dispatcher($static_configuration);
+$dispatcher = new Dispatcher($configuration);
 
 /*
  |--------------------------------
  | Loading routes
  |--------------------------------
  |
- | Import static configuration
- | to initialize the router
+ | Import routes (if route cache is
+ | empty)
  |
  */
-if (empty($dispatcher->router()->table()->routes())) {
- 
-    $routes = file_get_contents($routes_file);
-    $static_routes = Yaml::parse($routes);
-    
-    $dispatcher->router()->table()->load($static_routes);
-    
+if ( empty($dispatcher->router()->table()->routes()) ) {
+    $dispatcher->router()->table()->load($routes);
 }
 
 /*
@@ -99,13 +102,10 @@ if (empty($dispatcher->router()->table()->routes())) {
  | Load  plugins
  |--------------------------------
  |
- | Load plugins from yaml file
+ | Load plugins
  |
  */
-$plugins = file_get_contents($plugins_file);
-$static_plugins = Yaml::parse($plugins);
-
-$dispatcher->events()->loadPlugins($static_plugins);
+$dispatcher->events()->load($plugins);
 
 /*
  |--------------------------------

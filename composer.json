@@ -54,6 +54,9 @@
             }
         }
     },
+    "scripts": {
+        "cmdjClearCache": "rm -rf cache/*"
+    },
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.6.0",
