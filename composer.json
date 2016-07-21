@@ -31,6 +31,8 @@
     "extra": {
         "comodojo-configuration": {
             "static-config": "config",
+            "routing-table-cache": true,
+            "routing-table-ttl": 86400,
             "log": {
                 "enabled": true,
                 "name": "dispatcher",
