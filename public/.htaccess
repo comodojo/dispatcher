@@ -1,15 +1,21 @@
 ### BEGIN DISPATCHER CONFIG ###
 <IfModule mod_rewrite.c>
-Options +FollowSymLinks
-IndexIgnore */*
-# Turn on rewrite engine
-RewriteEngine On
-# Disable rewrite engine if target exists
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-# Disable rewrite for favicon
-#RewriteCond %{REQUEST_URI} !=/favicon.ico
-# Do rewrite!
-RewriteRule (.*) index.php [L]
+
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
+    Options +FollowSymLinks
+    IndexIgnore */*
+
+    # Turn on rewrite engine
+    RewriteEngine On
+
+    # Disable rewrite engine if target exists
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Do rewrite!
+    RewriteRule (.*) index.php [L]
 </IfModule>
 #### END DISPATCHER CONFIG ####

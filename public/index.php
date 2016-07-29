@@ -93,8 +93,8 @@ $dispatcher = new Dispatcher($configuration);
  | empty)
  |
  */
-if ( empty($dispatcher->router()->table()->routes()) ) {
-    $dispatcher->router()->table()->load($routes);
+if ( empty($dispatcher->router->table->routes()) ) {
+    $dispatcher->router->table->load($routes);
 }
 
 /*
@@ -105,7 +105,7 @@ if ( empty($dispatcher->router()->table()->routes()) ) {
  | Load plugins
  |
  */
-$dispatcher->events()->load($plugins);
+$dispatcher->events->load($plugins);
 
 /*
  |--------------------------------
