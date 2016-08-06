@@ -64,11 +64,5 @@
         "php": ">=5.6.0",
         "comodojo/dispatcher-installer": "dev-master",
         "comodojo/dispatcher.framework": "^4.0"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "git@github.com:comodojo/dispatcher-installer.git"
-        }
-    ]
+    }
 }
