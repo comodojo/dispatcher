@@ -93,7 +93,7 @@ $dispatcher = new Dispatcher($configuration);
  | empty)
  |
  */
-if ( empty($dispatcher->router->table->routes()) ) {
+if ( empty($dispatcher->router->table->routes) ) {
     $dispatcher->router->table->load($routes);
 }
 
