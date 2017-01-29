@@ -4,4 +4,7 @@ vendor/
 build/
 config/*
 !config/.placeholder
-# composer.lock
+logs/*
+!logs/.placeholder
+cache/*
+!cache/.placeholder

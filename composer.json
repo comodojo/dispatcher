@@ -29,12 +29,41 @@
         }
     },
     "extra": {
+        "comodojo-installer": {
+            "package-types": [
+                "comodojo-bundle"
+            ],
+            "global-config": {
+                "extra-field": "comodojo-configuration",
+                "persistence": "\\Comodojo\\Installer\\Persistence\\YamlPersistence",
+                "params": {
+                    "config-file": "config/comodojo-configuration.yml",
+                    "depth": 6
+                }
+            },
+            "package-extra": {
+                "routes": {
+                    "driver": "\\Comodojo\\Installer\\Drivers\\RouteDriver",
+                    "persistence": "\\Comodojo\\Installer\\Persistence\\YamlPersistence",
+                    "params": {
+                        "config-file": "config/comodojo-routes.yml"
+                    }
+                },
+                "plugins": {
+                    "driver": "\\Comodojo\\Installer\\Drivers\\PluginDriver",
+                    "persistence": "\\Comodojo\\Installer\\Persistence\\YamlPersistence",
+                    "params": {
+                        "config-file": "config/comodojo-plugins.yml"
+                    }
+                }
+            }
+        },
         "comodojo-configuration": {
             "static-config": "config",
             "routing-table-cache": true,
             "routing-table-ttl": 86400,
             "log": {
-                "enabled": true,
+                "enable": true,
                 "name": "dispatcher",
                 "providers": {
                     "local" : {
@@ -45,24 +74,21 @@
                 }
             },
             "cache": {
-                "enabled": true,
-                "algorithm": "PICK_FIRST",
+                "enable": true,
+                "pick_mode": "PICK_FIRST",
                 "providers": {
                     "local": {
                         "type": "Filesystem",
-                        "folder": "cache"
+                        "cache_folder": "cache"
                     }
                 }
             }
         }
     },
-    "scripts": {
-        "cmdjClearCache": "rm -rf cache/*"
-    },
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.6.0",
-        "comodojo/dispatcher-installer": "dev-master",
+        "comodojo/comodojo-installer": "dev-master",
         "comodojo/dispatcher.framework": "^4.0"
     }
 }

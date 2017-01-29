@@ -37,9 +37,11 @@ use \Symfony\Component\Yaml\Exception\ParseException;
  |
 */
 $realpath = realpath(dirname(__FILE__)."/../");
-$configuration_file = $realpath."/config/comodojo-config.yml";
-$routes_file = $realpath."/config/comodojo-routes.yml";
-$plugins_file = $realpath."/config/comodojo-plugins.yml";
+$files = [
+    'configuration' => "$realpath/config/comodojo-configuration.yml",
+    'routes' => "$realpath/config/comodojo-routes.yml",
+    'plugins' => "$realpath/config/comodojo-plugins.yml"
+];
 
 /*
  |--------------------------------
@@ -62,17 +64,16 @@ require $realpath.'/vendor/autoload.php';
  | routes and plugins yaml files.
  |
  */
-try {
-
-    $configuration = Yaml::parse(file_get_contents($configuration_file));
-    $routes = Yaml::parse(file_get_contents($routes_file));
-    $plugins = Yaml::parse(file_get_contents($plugins_file));
-
-} catch (ParseException $pe) {
-
-    exit("<h1>Error reading configuration files</h1>");
-
+$confdata = [];
+foreach ($files as $config => $path) {
+    try {
+        $confdata[$config] = Yaml::parse(@file_get_contents($path));
+    } catch (ParseException $pe) {
+        http_response_code(500);
+        exit("Error reading [$config] configuration file: ".$pe->getMessage());
+    }
 }
+
 
 /*
  |--------------------------------
@@ -82,7 +83,12 @@ try {
  | Create the dispatcher instance
  |
  */
-$dispatcher = new Dispatcher($configuration);
+try {
+    $dispatcher = new Dispatcher($confdata['configuration']);
+} catch (Exception $e) {
+    http_response_code(500);
+    exit("Dispatcher critical error, please check log: ".$e->getMessage());
+}
 
 /*
  |--------------------------------
@@ -94,7 +100,7 @@ $dispatcher = new Dispatcher($configuration);
  |
  */
 if ( empty($dispatcher->router->table->routes) ) {
-    $dispatcher->router->table->load($routes);
+    $dispatcher->router->table->load($confdata['routes']);
 }
 
 /*
@@ -105,6 +111,8 @@ if ( empty($dispatcher->router->table->routes) ) {
  | Load plugins
  |
  */
+$plugins = [];
+foreach ($confdata['plugins'] as $package => $plugin) $plugins_data[] = $plugin;
 $dispatcher->events->load($plugins);
 
 /*
