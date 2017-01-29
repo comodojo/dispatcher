@@ -67,10 +67,17 @@ require $realpath.'/vendor/autoload.php';
 $confdata = [];
 foreach ($files as $config => $path) {
     try {
-        $confdata[$config] = Yaml::parse(@file_get_contents($path));
+        $data = @file_get_contents($path);
+        if ( $config == 'configuration' && $data === false) {
+            throw new Exception("Error reading [$config] configuration file");
+        }
+        $confdata[$config] = $data !== false ? Yaml::parse($data) : [];
     } catch (ParseException $pe) {
         http_response_code(500);
-        exit("Error reading [$config] configuration file: ".$pe->getMessage());
+        exit("Error parsing [$config] configuration file: ".$pe->getMessage());
+    } catch (Exception $e) {
+        http_response_code(500);
+        exit($e->getMessage());
     }
 }
 
