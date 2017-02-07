@@ -119,7 +119,7 @@ if ( empty($dispatcher->router->table->routes) ) {
  |
  */
 $plugins = [];
-foreach ($confdata['plugins'] as $package => $plugin) $plugins_data[] = $plugin;
+foreach ($confdata['plugins'] as $package => $plugin) $plugins[] = $plugin;
 $dispatcher->events->load($plugins);
 
 /*
