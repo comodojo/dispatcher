@@ -106,8 +106,9 @@ try {
  | empty)
  |
  */
-if ( empty($dispatcher->router->table->routes) ) {
-    $dispatcher->router->table->load($confdata['routes']);
+$table = $dispatcher->getRouter()->getTable();
+if ( empty($table->getRoutes()) ) {
+    $table->load($confdata['routes']);
 }
 
 /*
@@ -120,7 +121,7 @@ if ( empty($dispatcher->router->table->routes) ) {
  */
 $plugins = [];
 foreach ($confdata['plugins'] as $package => $plugin) $plugins[] = $plugin;
-$dispatcher->events->load($plugins);
+$dispatcher->getEvents()->load($plugins);
 
 /*
  |--------------------------------
