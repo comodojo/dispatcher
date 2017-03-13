@@ -117,12 +117,17 @@ if ( empty($table->getRoutes()) ) {
  |--------------------------------
  |
  | Load plugins
+ | TODO: recode double foreach
  |
  */
-$plugins = [];
-foreach ($confdata['plugins'] as $package => $plugin) $plugins[] = $plugin;
-$dispatcher->getEvents()->load($plugins);
-
+ $plain_plugins = [];
+ foreach ($confdata['plugins'] as $package => $plugins) {
+     foreach ($plugins as $plugin) {
+         $plain_plugins[] = $plugin;
+     }
+ }
+ $dispatcher->getEvents()->load($plain_plugins);
+ 
 /*
  |--------------------------------
  | Dispatch!
