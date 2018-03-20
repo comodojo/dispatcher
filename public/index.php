@@ -127,7 +127,7 @@ if ( empty($table->getRoutes()) ) {
      }
  }
  $dispatcher->getEvents()->load($plain_plugins);
- 
+
 /*
  |--------------------------------
  | Dispatch!
