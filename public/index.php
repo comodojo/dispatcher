@@ -1,30 +1,25 @@
 <?php
 
 use \Comodojo\Dispatcher\Dispatcher;
-use \Symfony\Component\Yaml\Yaml;
-use \Symfony\Component\Yaml\Exception\ParseException;
+use \Comodojo\Dispatcher\Components\RoutesLoader;
+use \Comodojo\Dispatcher\Components\PluginsLoader;
+use \Comodojo\Foundation\Base\ConfigurationLoader;
 
 /**
- * Comodojo dispatcher - REST services microframework
- *
- * @package     Comodojo dispatcher
+ * @package     Comodojo Dispatcher
  * @author      Marco Giovinazzi <marco.giovinazzi@comodojo.org>
- * @license     GPL-3.0+
+ * @author      Marco Castiello <marco.castiello@gmail.com>
+ * @license     MIT
  *
  * LICENSE:
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 /*
@@ -32,55 +27,32 @@ use \Symfony\Component\Yaml\Exception\ParseException;
  | Configuration
  |--------------------------------
  |
- | Retrieve real path and declare
- | configuration files.
+ | Retrieve real path, init autoloader
+ | and declare configuration files.
  |
 */
 $realpath = realpath(dirname(__FILE__)."/../");
-$files = [
-    'configuration' => "$realpath/config/comodojo-configuration.yml",
-    'routes' => "$realpath/config/comodojo-routes.yml",
-    'plugins' => "$realpath/config/comodojo-plugins.yml"
-];
+$autoloader = "$realpath/vendor/autoload.php";
+$configuration_file = "$realpath/config/comodojo-configuration.yml";
+$routes_file = "$realpath/config/comodojo-routes.yml";
+$plugins_file = "$realpath/config/comodojo-plugins.yml";
+
+require_once $autoloader;
 
 /*
  |--------------------------------
- | Autoloader
+ | Main Configuration
  |--------------------------------
  |
- | Register the autoloader, located in vendor
- | directory. In a composer installation, this
- | will be handled directly with composer.
+ | Read and parse main configuration.
  |
  */
-require $realpath.'/vendor/autoload.php';
-
-/*
- |--------------------------------
- | Configuration files
- |--------------------------------
- |
- | Read and parse configuration,
- | routes and plugins yaml files.
- |
- */
-$confdata = [];
-foreach ($files as $config => $path) {
-    try {
-        $data = @file_get_contents($path);
-        if ( $config == 'configuration' && $data === false) {
-            throw new Exception("Error reading [$config] configuration file");
-        }
-        $confdata[$config] = $data !== false ? Yaml::parse($data) : [];
-    } catch (ParseException $pe) {
-        http_response_code(500);
-        exit("Error parsing [$config] configuration file: ".$pe->getMessage());
-    } catch (Exception $e) {
-        http_response_code(500);
-        exit($e->getMessage());
-    }
+try {
+    $configuration = ConfigurationLoader::load($configuration_file);
+} catch (Exception $e) {
+    http_response_code(500);
+    exit($e->getMessage());
 }
-
 
 /*
  |--------------------------------
@@ -91,7 +63,7 @@ foreach ($files as $config => $path) {
  |
  */
 try {
-    $dispatcher = new Dispatcher($confdata['configuration']);
+    $dispatcher = new Dispatcher($configuration->get());
 } catch (Exception $e) {
     http_response_code(500);
     exit("Dispatcher critical error, please check log: ".$e->getMessage());
@@ -99,16 +71,23 @@ try {
 
 /*
  |--------------------------------
- | Loading routes
+ | Routes
  |--------------------------------
  |
- | Import routes (if route cache is
- | empty)
+ | Read and parse routes
  |
  */
-$table = $dispatcher->getRouter()->getTable();
-if ( empty($table->getRoutes()) ) {
-    $table->load($confdata['routes']);
+if (
+    file_exists($routes_file) &&
+    empty($dispatcher->getRouter()->getTable()->getRoutes())
+) {
+    try {
+        $routes = RoutesLoader::load($routes_file);
+        $dispatcher->getRouter()->getTable()->load($routes);
+    } catch (Exception $e) {
+        http_response_code(500);
+        exit("Unable to process routes, please check log: ".$e->getMessage());
+    }
 }
 
 /*
@@ -117,16 +96,17 @@ if ( empty($table->getRoutes()) ) {
  |--------------------------------
  |
  | Load plugins
- | TODO: recode double foreach
  |
  */
- $plain_plugins = [];
- foreach ($confdata['plugins'] as $package => $plugins) {
-     foreach ($plugins as $plugin) {
-         $plain_plugins[] = $plugin;
+ if ( file_exists($plugins_file) ) {
+     try {
+         $plugins = PluginsLoader::load($plugins_file);
+         $dispatcher->getEvents()->load($plugins);
+     } catch (Exception $e) {
+         http_response_code(500);
+         exit("Unable to process plugins, please check log: ".$e->getMessage());
      }
  }
- $dispatcher->getEvents()->load($plain_plugins);
 
 /*
  |--------------------------------
