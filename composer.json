@@ -1,15 +1,16 @@
 {
     "name": "comodojo/dispatcher",
-    "description": "Composer project template for comodojo/dispatcher-framework",
+    "description": "comodojo/dispatcher framework default project package",
     "license": "MIT",
     "type": "project",
     "keywords": [
         "REST",
         "php",
         "rest services",
-        "lframework",
+        "framework",
         "comodojo",
-        "installer"
+        "installer",
+        "project"
     ],
     "homepage": "https://dispatcher.comodojo.org",
      "support": {
