@@ -4,13 +4,13 @@ Contributions are **welcome** and will be fully **credited**.
 
 ## Bug Report
 
-Have you found a bug? Raise an issues on [Github](https://github.com/comodojo/dispatcher.project/issues).
+Have you found a bug? Raise an issues on [Github](https://github.com/comodojo/dispatcher/issues).
 
 ### Prior to submitting your report
 
 - **Search the issue or pull request list first**.
 
-- **Check the [master branch](https://github.com/comodojo/dispatcher.project)** to see if the bug has already been fixed.
+- **Check the [master branch](https://github.com/comodojo/dispatcher)** to see if the bug has already been fixed.
 
 ### When submitting your report
 
@@ -20,7 +20,7 @@ Have you found a bug? Raise an issues on [Github](https://github.com/comodojo/di
 
 ## Pull Request
 
-To perform a Pull Requests on [Github](https://github.com/comodojo/dispatcher.project/pulls):
+To perform a Pull Requests on [Github](https://github.com/comodojo/dispatcher/pulls):
 
 - Fork the project.
 
