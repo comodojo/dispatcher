@@ -94,7 +94,6 @@
             }
         }
     },
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.6.0",
         "comodojo/comodojo-installer": "^1.0",

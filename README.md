@@ -2,8 +2,6 @@
 
 [Comodojo/dispatcher framework](https://github.com/comodojo/dispatcher.framework) default project package.
 
-**This is the development branch, please do not use it in production**
-
 For more information, visit [dispatcher.comodojo.org](https://dispatcher.comodojo.org).
 
 ## Installation
@@ -30,12 +28,12 @@ Then, cd into the newly created folder and:
 
 ## Documentation
 
-- Docs (wip): [docs.comodojo.org](https://docs.comodojo.org/en/latest/)
+- Docs (wip): [docs.comodojo.org](https://docs.comodojo.org/projects/dispatcherframework/en/latest/)
 
 ## Contributing
 
 Contributions are welcome and will be fully credited. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-> Copyright (c) 2018 Marco Giovinazzi
+> Copyright (c) 2019 Marco Giovinazzi
 >
 > For more information, visit [comodojo.org](https://comodojo.org).
